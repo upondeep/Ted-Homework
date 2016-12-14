@@ -1,0 +1,128 @@
+// JavaScript source code
+"use strict";
+//#region variables
+var oldData = [
+{
+    "firstName": "Tom",
+    "lastName": "Zhang",
+    "ext": "1001",
+    "cell": "416-000-0000",
+    "alt": "",
+    "title": "Manager",
+    "email": "tomz@jsrocks.com",
+},
+{
+    "firstName": "Peter",
+    "lastName": "Wang",
+    "ext": "1003",
+    "cell": "647-222-2222",
+    "alt": "416-333-3333",
+    "title": "QA",
+    "email": "peterw@jsrocks.com",
+}
+], newData = [
+{
+    "firstName": "Tom",
+    "lastName": "Zhang",
+    "ext": "1001",
+    "cell": "416-000-0000",
+    "alt": "",
+    "title": "Manager",
+    "email": "tomz@jsrocks.com",
+},
+{
+    "firstName": "Peter",
+    "lastName": "Wang",
+    "ext": "1003",
+    "cell": "647-222-2222",
+    "alt": "416-333-3344",
+    "title": "QA",
+    "email": "peterw@jsrocks.com",
+},
+{
+    "firstName": "Ted",
+    "lastName": "Tong",
+    "ext": "6666",
+    "cell": "416-432-5343",
+    "alt": "",
+    "title": "Grand Master",
+    "email": "upondeep@hotmail.com",
+},
+{
+    "firstName": "Jerry",
+    "lastName": "Mice",
+    "ext": "1002",
+    "cell": "647-476-4532",
+    "alt": "",
+    "title": "The Mouse",
+    "email": "jerrym@jsrocks.com",
+}
+],
+    result;
+//#endregion
+
+/*
+ * compare if two objects have same value
+ */
+function objSameValue(a, b) {
+    var aProps = Object.getOwnPropertyNames(a),
+        bProps = Object.getOwnPropertyNames(b);
+
+    if (aProps.length != bProps.length) {
+        return false;
+    }
+
+    for (var i = 0; i < aProps.length; i++) {
+        var propName = aProps[i];
+        if (a[propName] !== b[propName]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/*
+ * main function for comparing arrays
+ */
+function compare(oldData, newData) {
+    var result = { 'added': [], 'deleted': [], 'modified': [] },
+        od = oldData, nd = newData, sameData = [];
+    //find same data in the two arrays
+    nd.forEach(function (data) {
+        var exist = false;
+        for (var i = 0; i < od.length; i++) {
+            if (data['firstName'] === od[i]['firstName'] && data['lastName'] === od[i]['lastName']) {
+                sameData.push(od[i]);
+                exist = true;
+                //check modified
+                if (!objSameValue(data, od[i])) {
+                    result['modified'].push(od[i]);
+                }
+                break;
+            }
+        }
+        //check added
+        if (!exist) {
+            result['added'].push(data);
+        }
+    });
+    //
+    od.forEach(function (data) {
+        var exist = false;
+        for (var i = 0; i < sameData.length; i++) {
+            if (data['firstName'] === sameData[i]['firstName'] && data['lastName'] === sameData[i]['lastName']) {
+                exist = true;
+                break;
+            }         
+        }
+        //check deleted
+        if (!exist) {
+            result['deleted'].push(data);
+        }
+    });
+    return result;
+}
+
+result = compare(oldData, newData);
+
+console.log(result);
