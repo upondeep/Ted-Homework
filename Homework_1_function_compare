@@ -108,6 +108,9 @@ function splitSearch(array,low,high,target) {
     return -1;
 }
 
+/*
+ * main function for comparing arrays
+ */
 function compare(oldData, newData) {
     var result = { 'added': [], 'deleted': [], 'modified': [] },
         //make a copy of data
