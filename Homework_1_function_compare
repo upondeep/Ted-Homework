@@ -21,15 +21,15 @@ var oldData = [
     "email": "peterw@jsrocks.com",
 }
 ], newData = [
-{
-    "firstName": "Tom",
-    "lastName": "Zhang",
-    "ext": "1001",
-    "cell": "416-000-0000",
-    "alt": "",
-    "title": "Manager",
-    "email": "tomz@jsrocks.com",
-},
+//{
+//    "firstName": "Tom",
+//    "lastName": "Zhang",
+//    "ext": "1001",
+//    "cell": "416-000-0000",
+//    "alt": "",
+//    "title": "Manager",
+//    "email": "tomz@jsrocks.com",
+//},
 {
     "firstName": "Peter",
     "lastName": "Wang",
@@ -82,47 +82,68 @@ function objSameValue(a, b) {
 }
 
 /*
+ * check specific key
+ */
+function equalPropVal(a, b, propName) {
+    if (a[propName] === b[propName]) {
+        return true;
+    }
+    return false;
+}
+
+/*
+ * split search
+ */
+function splitSearch(array,low,high,target) {
+    while (low < high) {
+        var mid = Math.floor((low + high) / 2);
+        if (equalPropVal(array[mid], target,'email')) {
+            return mid;
+        } else if (target.email.localeCompare(array[mid].email)) {
+            return splitSearch(array, low, mid - 1, target);
+        } else {
+            return splitSearch(array, mid + 1, high, target);
+        }
+    }
+    return -1;
+}
+
+/*
  * main function for comparing arrays
  */
 function compare(oldData, newData) {
     var result = { 'added': [], 'deleted': [], 'modified': [] },
-        od = oldData, nd = newData, sameData = [];
-    //find same data in the two arrays
+        //make a copy of data
+        od = oldData.slice(), nd = newData.slice();
+    
+    //sort old data by email
+    od.sort(function (a, b) {
+        return a.email.localeCompare(b.email);
+    });
+
+    //loop through new data
     nd.forEach(function (data) {
-        var exist = false;
-        for (var i = 0; i < od.length; i++) {
-            if (data['firstName'] === od[i]['firstName'] && data['lastName'] === od[i]['lastName']) {
-                sameData.push(od[i]);
-                exist = true;
-                //check modified
-                if (!objSameValue(data, od[i])) {
-                    result['modified'].push(od[i]);
-                }
-                break;
+        var exist = false,
+            index = splitSearch(od, 0, od.length-1, data);
+        if (index > -1) {
+            //check modified
+            if (!objSameValue(data, od[index])) {
+                result.modified.push({ 'oldData': od[index], 'newData': data });
             }
+            od.splice(index, 1);
+            exist = true;            
         }
         //check added
         if (!exist) {
-            result['added'].push(data);
+            result.added.push(data);
         }
     });
-    //
-    od.forEach(function (data) {
-        var exist = false;
-        for (var i = 0; i < sameData.length; i++) {
-            if (data['firstName'] === sameData[i]['firstName'] && data['lastName'] === sameData[i]['lastName']) {
-                exist = true;
-                break;
-            }         
-        }
-        //check deleted
-        if (!exist) {
-            result['deleted'].push(data);
-        }
-    });
+    //the rest of od is deleted
+    result.deleted = od;
     return result;
 }
 
 result = compare(oldData, newData);
 
 console.log(result);
+
