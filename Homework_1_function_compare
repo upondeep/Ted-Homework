@@ -85,13 +85,13 @@ function objSameValue(a, b) {
 /*
  * split search
  */
-function splitSearch(array,low,high,target) {
+function splitSearch(array, low, high, target) {
     while (low < high) {
         var mid = Math.ceil((low + high) / 2);
-        if (target.email.localeCompare(array[mid].email)>0) {
-            return splitSearch(array, mid+1, high, target);
-        } else if(target.email.localeCompare(array[mid].email)<0){
-            return splitSearch(array, low, mid-1, target);
+        if (target.email.localeCompare(array[mid].email) > 0) {
+            return splitSearch(array, mid + 1, high, target);
+        } else if (target.email.localeCompare(array[mid].email) < 0) {
+            return splitSearch(array, low, mid - 1, target);
         }
         else {
             return mid;
@@ -104,7 +104,7 @@ function splitSearch(array,low,high,target) {
  * main function for comparing arrays
  */
 function compare(oldData, newData) {
-    var result = { 'added': [], 'deleted': [], 'modified': [] },
+    var result = {'added': [], 'deleted': [], 'modified': []},
     //make a copy of data
         od = oldData.slice(), nd = newData.slice();
 
@@ -116,11 +116,11 @@ function compare(oldData, newData) {
     //loop through new data
     nd.forEach(function (data) {
         var exist = false,
-            index = splitSearch(od, 0, od.length-1, data);
+            index = splitSearch(od, 0, od.length - 1, data);
         if (index > -1) {
             //check modified
             if (!objSameValue(data, od[index])) {
-                result.modified.push({ 'oldData': od[index], 'newData': data });
+                result.modified.push({'oldData': od[index], 'newData': data});
             }
             od.splice(index, 1);
             exist = true;
