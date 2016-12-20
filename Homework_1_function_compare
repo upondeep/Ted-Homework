@@ -2,7 +2,6 @@
  * Created by XD on 2016-12-19.
  */
 "use strict";
-//#region variables
 var oldData = [
         {
             "firstName": "Tom",
@@ -61,7 +60,6 @@ var oldData = [
         }
     ],
     result;
-//#endregion
 
 /*
  * compare if two objects have same value
