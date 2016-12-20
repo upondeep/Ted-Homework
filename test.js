@@ -34,7 +34,7 @@ function equalPropVal(a, b, propName) {
  * split search
  */
 function splitSearch(array,low,high,target) {
-    while (low < high) {
+    while ((high-low) > -1) {
         var mid = Math.ceil((low + high) / 2);
         if (target.email.localeCompare(array[mid].email)>0) {
             return splitSearch(array, mid+1, high, target);
@@ -103,8 +103,8 @@ function generateData(num){
     return ret;
 }
 
-oldData = generateData(6);
-newData =generateData(6);
+oldData = generateData(10000);
+newData = generateData(10000);
 newData.splice(0,1);
 newData.splice(4,1,{
     'firstName':'firstName'+'A',
