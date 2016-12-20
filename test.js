@@ -3,10 +3,6 @@
  */
 'use strict';
 var result, oldData, newData, tt;
-
-/*
- * Check if two objects' value are equal
- */
 function objSameValue(a, b) {
     var aProps = Object.getOwnPropertyNames(a),
         bProps = Object.getOwnPropertyNames(b);
@@ -24,21 +20,16 @@ function objSameValue(a, b) {
     return true;
 }
 
-/*
- * Clone object
- */
-function cloneObj(obj) {
-    var result = {}, props = Object.getOwnPropertyNames(obj);
-    for (var i = 0; i < props.length; i++) {
-        var propName = props[i];
-        result[propName] = obj[propName];
-    }
-    return result;
-}
+//function cloneObj(obj) {
+//    var result = {}, props = Object.getOwnPropertyNames(obj);
+//    for (var i = 0; i < props.length; i++) {
+//        var propName = props[i];
+//        result[propName] = obj[propName];
+//    }
+//    return result;
+//}
 
-/*
- * Quick sort
- */
+
 function objQuickSort(array,key) {
     function swap(arr, a, b) {
         var temp = arr[a];
@@ -46,9 +37,9 @@ function objQuickSort(array,key) {
         arr[b] = temp;
     }
     function partition(array,low,high,key) {
-        var  temp = array[high], storedIndex =low;
+        var pivot = array[high], storedIndex = low;
         for (var i = low; i < high; i++){
-            if (array[low][key].localeCompare(temp[key]) < 0) {
+            if (array[i][key].localeCompare(pivot[key]) < 0) {
                 swap(array, storedIndex, i);
                 storedIndex++;
             }
@@ -143,8 +134,8 @@ function generateData(num) {
     return ret;
 }
 
-oldData = generateData(1000);
-newData = generateData(1000);
+oldData = generateData(100000);
+newData = generateData(100000);
 newData.splice(0, 1);
 newData.splice(4, 1, {
     'firstName': 'firstName' + 'A',
