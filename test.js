@@ -39,8 +39,7 @@ function cloneObj(obj) {
 /*
  * Quick sort
  */
-function objQuickSort(array,low,high,key) {
-    if(low < high) return;
+function objQuickSort(array,key) {
     function swap(arr, a, b) {
         var temp = arr[a];
         arr[a] = arr[b];
@@ -64,7 +63,7 @@ function objQuickSort(array,low,high,key) {
         sort(array, low, pivotIndex - 1,key);
         sort(array, pivotIndex + 1,high,key);
     }
-    sort(array,0,array.length-1,'email');
+    sort(array,0,array.length-1,key);
 
     return array;
 };
@@ -100,7 +99,7 @@ function compare(oldData, newData) {
     //od.sort(function (a, b) {
     //    return a.email.localeCompare(b.email);
     //});
-    od = objQuickSort(beforeSort);
+    od = objQuickSort(beforeSort,'email');
     //console.log(od);
     //loop through new data
     nd.forEach(function (data) {
