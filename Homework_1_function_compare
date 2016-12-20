@@ -85,13 +85,13 @@ function objSameValue(a, b) {
 /*
  * split search
  */
-function splitSearch(array, low, high, target) {
-    while (low < high) {
+function splitSearch(array,low,high,target) {
+    while ((high-low) > -1) {
         var mid = Math.ceil((low + high) / 2);
-        if (target.email.localeCompare(array[mid].email) > 0) {
-            return splitSearch(array, mid + 1, high, target);
-        } else if (target.email.localeCompare(array[mid].email) < 0) {
-            return splitSearch(array, low, mid - 1, target);
+        if (target.email.localeCompare(array[mid].email)>0) {
+            return splitSearch(array, mid+1, high, target);
+        } else if(target.email.localeCompare(array[mid].email)<0){
+            return splitSearch(array, low, mid-1, target);
         }
         else {
             return mid;
