@@ -1,0 +1,49 @@
+// JavaScript source code
+"use strict";
+
+var url = "http://web-aaronding.rhcloud.com/employee.html";
+var cheerio = require("cheerio"),
+    request = require("request"),
+    JSON = [],
+    keys = [],
+    nd;
+    //DOMParser = require("xmldom").DOMParser,
+    //parser = new DOMParser();
+
+request({
+    method: 'GET',
+    url: url
+}, function (err, response, body) {
+    if (err) return console.error(err);
+    var $ = cheerio.load(body);
+    
+    //get keys
+    $('tr th').each(function (i, element) {
+        keys.push($(this).text());
+    });
+    
+    //assign td values
+    $('tr:not(:first-child)').each(function (i, element) {
+        nd = {};
+        $(this).children('td').each(function (j,elem) {
+            nd[keys[j]] = $(this).text();
+        });
+        JSON.push(nd);
+    });
+
+    JSON.shift();
+    console.log(JSON);
+});
+
+//var xhr = new XMLHttpRequest();
+//xhr.open("GET", url, true);
+//xhr.onload = getSourceDOM();
+//xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+//xhr.setRequestHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+//xhr.send();
+
+//function getSourceDOM() {
+//    var parser = new DOMParser();
+//    var result = parser.parseFromString(xhr.responseText, "text/html");
+//    console.log(result);
+//}
