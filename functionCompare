@@ -33,10 +33,10 @@ exports.compare = function(a, b) {
     //    return result;
     //}
 
-/**
- * @param {array} array
- * @param {string} key
- */
+    /**
+     * @param {array} array
+     * @param {string} key
+     */
     function objQuickSort(array, key) {
         function swap(arr, a, b) {
             var temp = arr[a];
