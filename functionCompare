@@ -151,4 +151,4 @@ exports.compare = function(a, b) {
     }
 
     return compare(a, b);
-}
+};
