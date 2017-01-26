@@ -19,4 +19,4 @@ exports.readFromFile = function (path) {
     };
     console.log('read from ' + path);
     return result;
-}
+};
