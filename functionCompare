@@ -12,14 +12,14 @@ exports.compare = function(a, b) {
 
         if (aProps.length != bProps.length) {
             return false;
-        }
+        };
 
         for (var i = 0; i < aProps.length; i++) {
             var propName = aProps[i];
             if (a[propName] !== b[propName]) {
                 return false;
             }
-        }
+        };
 
         return true;
     }
@@ -38,35 +38,56 @@ exports.compare = function(a, b) {
      * @param {string} key
      */
     function objQuickSort(array, key) {
+
+        /**
+         * @param {array} arr
+         * @param {number} a
+         * @param {number} b 
+         */
         function swap(arr, a, b) {
             var temp = arr[a];
             arr[a] = arr[b];
             arr[b] = temp;
         }
 
+        /**
+         * @param {array} array
+         * @param {number} low
+         * @param {number} high
+         * @param {string} key
+         */
         function partition(array, low, high, key) {
             var pivot = array[high], storedIndex = low;
+
             for (var i = low; i < high; i++) {
                 if (array[i][key].localeCompare(pivot[key]) < 0) {
                     swap(array, storedIndex, i);
                     storedIndex++;
                 }
-            }
+            };
+
             swap(array, storedIndex, i);
+
             return storedIndex;
         }
 
+        /**
+         * @param {array} array
+         * @param {number} low
+         * @param {number} high
+         * @param {string} key
+         */
         function sort(array, low, high, key) {
             if (low > high) return;
             var pivotIndex = partition(array, low, high, key);
             sort(array, low, pivotIndex - 1, key);
             sort(array, pivotIndex + 1, high, key);
         }
+
         sort(array, 0, array.length - 1, key);
 
         return array;
     };
-
 
     /**
      * split search
@@ -87,8 +108,8 @@ exports.compare = function(a, b) {
             }
             else {
                 return mid;
-            }
-        }
+            };
+        };
 
         return -1;
     }
@@ -107,27 +128,27 @@ exports.compare = function(a, b) {
         nd.forEach(function (data) {
             var exist = false,
                 index = splitSearch(od, 0, od.length - 1, data, key);
+
             if (index > -1) {
                 //check modified
                 if (!objSameValue(data, od[index])) {
                     result.modified.push({ 'oldData': od[index], 'newData': data });
-                }
+                };
                 od.splice(index, 1);
                 exist = true;
-            }
+            };
+
             //check added
             if (!exist) {
                 result.added.push(data);
-            }
+            };
         });
+
         //the rest of od is deleted
         result.deleted = od;
+
         return result;
     }
 
-    return compare(a,b);
+    return compare(a, b);
 }
-
-
-
-
