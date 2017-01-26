@@ -37,7 +37,7 @@ exports.getJSON = function(afterGetJson) {
         method: 'GET',
         url: url
     }, requestCallBack);
-}
+};
 
 
 //var xhr = new XMLHttpRequest();
