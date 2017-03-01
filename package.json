@@ -1,0 +1,19 @@
+{
+  "name": "projecth",
+  "version": "1.0.0",
+  "description": "to extract information from 51.ca and yorkbbs",
+  "main": "./js/main.js",
+  "dependencies": {
+    "cheerio": "^0.22.0",
+    "iconv-lite": "^0.4.15",
+    "openurl": "^1.1.1",
+    "request": "^2.79.0",
+    "selenium": "^2.20.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "run"
+  },
+  "author": "Ted",
+  "license": "ISC"
+}
