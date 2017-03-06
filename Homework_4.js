@@ -6,10 +6,13 @@ const cheerio = require('cheerio'),
 
 const BASE_DIR = 'C:\\Users\\Ttong\\Desktop\\ProjectH\\',
     RESULTDIR = 'json\\',
+    IMAGEDIR = 'images\\',
     HOUSE = 'house_',
     RUNNING_TIME = new Date().toLocaleString().replace(/ /g, '').replace(/\//g, '_').replace(/,/g, '__').replace(/:/g, '_'),
     //.replace(/:(?:\d{2}) ([AP]M)/, '$1')
-    RESULT_FILE = BASE_DIR + RESULTDIR + HOUSE + RUNNING_TIME + '.txt';
+    RESULT_FILE = BASE_DIR + RESULTDIR + HOUSE + RUNNING_TIME + '.txt',
+    RESULT_IMAGE = BASE_DIR + IMAGEDIR + RUNNING_TIME + '\\';
+
 
 const headers = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.65 Safari/537.36'
@@ -102,8 +105,21 @@ let getData = {
 
 let processResult = (array) => {
     let path = RESULT_FILE;
-
+    let imgPath = RESULT_IMAGE;
+    array.forEach((record) => {
+        let link = record['imgLink'] ? record['imgLink'].toString() : '';
+        let filename = RESULT_IMAGE + link.substring(link.lastIndexOf('/')+1);
+        download(link, filename, () => { });
+    });
     fs.open(path, 'a', storeIntoFile(path, array));
+};
+
+let download = (uri, filename, callback) => {
+    let dir = filename.substring(filename.lastIndexOf('\\'), 0);
+    fs.mkdir(dir, () => { });
+    request.head(uri, function (err,res,body) {
+        request(uri).pipe(fs.createWriteStream(filename, {falgs:'w'})).on('close',callback);
+    });
 };
 
 let storeIntoFile = (path, array) => {
