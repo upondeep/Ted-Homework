@@ -20,7 +20,7 @@ const headers = {
 
 const urlList = {
     _51caHouseSelling: 'http://www.51.ca/house/housedisplay.php?s=7171bc76c6ff39eb8038d5e5ae2bf871',
-    yorkbbsHouseSelling: 'http://house.yorkbbs.ca/selling/list.aspx'
+    yorkbbsHouseSelling: 'http://house.yorkbbs.ca/selling/list.aspx?infosource=1'
 };
 
 var info = {
@@ -91,19 +91,78 @@ let getData = {
                     resolve(info['_51caHouseSelling']);
                 });
             } catch (err) {
-                reject(e);
+                reject(err);
             }           
-        });
-       
+        });     
         //'HouseListBit';
     },
-    'yorkbbsHouseSelling': window => {
-        let $ = window;
+    'yorkbbsHouseSelling': {
+        'getAllList':window => {
+            return new Promise((resolve, reject) => {
+                try {
+                    console.log('getAllList');
+                    let $ = window,
+                        website = 'http://house.yorkbbs.ca/selling',
+                        loop = [],
+                        leth =$('#plSellingMessage li h2').length;
+                    $('#plSellingMessage li h2').each((i, element) => {
+                        var subLink = ('/' + $(element).find('h2 a').attr('href')).replace('//', '/');
 
+                        var step = new Promise((resolve, reject) => {
+                            requestUrl(website + subLink).then(getDom, logError).then(getData.yorkbbsHouseSelling.processSubLink, logError);
+                        });
+
+                        loop.push(step);
+                    });
+                    resolve(loop);
+                    
+                } catch (err) {
+                    reject(err);
+                } 
+            });
+            //'plSellingBidPrice';
+        },
+        'processSubLink':window => {
+            //return new Promise((resolve, reject) => {
+                try {
+                    var name, location, price, tel, email, type, imgLink;
+                    console.log('Enter Sublink');
+                    let $ = window;
+                    $('.views-row-address p').remove();
+                    console.log($('.views-cover-img').find('img').attr('src'));
+                        name = $('.views-people em').text();
+                        location = $('.views-row-address').text();
+                        price = $('.views-price').text();
+                        tel = $('.views-phone em').html();
+                        email = $('.views-link').children().first().attr('href');
+                        type = $('.views-content ul:nth-child(3) span').text();
+                        imgLink = $('.views-cover-img').find('img').attr('src') || '';
+
+                    info['yorkbbsHouseSelling'].push({
+                        name: name,
+                        location: location,
+                        price: price,
+                        tel: tel,
+                        email: email,
+                        type: type,
+                        imgLink: imgLink,
+                    });
+                    resolve();
+
+                } catch (err) {
+                    //reject(err);
+                };
+            //});
+        }
     },
 };
 
+
 let processResult = (array) => {
+
+    console.log('Process Result:');
+    console.log(array);
+
     let path = RESULT_FILE;
     let imgPath = RESULT_IMAGE;
     array.forEach((record) => {
@@ -127,10 +186,26 @@ let storeIntoFile = (path, array) => {
         fs.writeFile(path, JSON.stringify(array));
     };
 };
+////////////////
+let processResultt = (array) => {
 
+    console.log('Process Result:');
+    console.log(array);
+};
 
 let run = () => {
-    requestUrl(urlList['_51caHouseSelling']).then(getDom, logError).then(getData['_51caHouseSelling'], logError).then(processResult);
+    //requestUrl(urlList['_51caHouseSelling'])
+    //    .then(getDom, logError)
+    //    .then(getData['_51caHouseSelling'], logError)
+    //    .then(processResult)
+    //;
+
+    requestUrl(urlList['yorkbbsHouseSelling'])
+        .then(getDom, logError)
+        .then(getData.yorkbbsHouseSelling.getAllList, logError)
+        .then((loop) => { Promise.all(loop).then(processResultt(info.yorkbbsHouseSelling)) }, logError)
+        //.then(processResult)
+    ;
 };
 
 run();
