@@ -1,6 +1,6 @@
 const cheerio = require('cheerio'),
     fs = require('fs'),
-    iconv =require('iconv-lite'),
+    iconv = require('iconv-lite'),
     openurl = require('openurl'),
     request = require('request');
 
@@ -28,8 +28,6 @@ var info = {
     'yorkbbsHouseSelling': []
 };
 
-//var $;
-
 /*
  * reject handler
  */
@@ -43,7 +41,7 @@ let requestUrl = url => {
         request({
             method: 'GET',
             url: url,
-            encoding:null,
+            encoding: null,
             headers: headers
         }, (err, response, body) => {
             if (err || response.statusCode !== 200) reject(err)
@@ -61,7 +59,7 @@ let getDom = body => {
             resolve(window);
         } catch (err) {
             reject(err);
-        } 
+        }
     });
 };
 
@@ -92,19 +90,19 @@ let getData = {
                 });
             } catch (err) {
                 reject(err);
-            }           
-        });     
+            }
+        });
         //'HouseListBit';
     },
     'yorkbbsHouseSelling': {
-        'getAllList':window => {
+        'getAllList': window => {
             return new Promise((resolve, reject) => {
                 try {
                     console.log('getAllList');
                     let $ = window,
                         website = 'http://house.yorkbbs.ca/selling',
                         loop = [],
-                        leth =$('#plSellingMessage li h2').length;
+                        leth = $('#plSellingMessage li h2').length;
                     $('#plSellingMessage li h2').each((i, element) => {
                         var subLink = ('/' + $(element).find('h2 a').attr('href')).replace('//', '/');
 
@@ -112,12 +110,8 @@ let getData = {
                             requestUrl(website + subLink)
                             .then(getDom, logError)
                             .then(getData.yorkbbsHouseSelling.processSubLink, logError).then(() => {
-                                //console.log('final stage......................');
-                                //console.log(info.yorkbbsHouseSelling.length);
-                                //console.log(leth);
                                 if (info.yorkbbsHouseSelling.length === leth) processResult(info.yorkbbsHouseSelling);
-                            },logError);
-                                //.then(processResultt);
+                            }, logError);
                         });
 
                         loop.push(step);
@@ -125,36 +119,36 @@ let getData = {
                     Promise.all(loop);
                 } catch (err) {
                     reject(err);
-                } 
+                }
             });
             //'plSellingBidPrice';
         },
         'processSubLink': window => {
             console.log('processSubLink');
             return new Promise((resolve, reject) => {
-                        var name, location, price, tel, email, type, imgLink;
-                        console.log('Enter Sublink');
-                        let $ = window;
-                        $('.views-row-address p').remove();            
-                        console.log($('.views-cover-img').find('img').attr('src'));
-                        name = $('.views-people em').text();
-                        location = $('.views-row-address').text();
-                        price = $('.views-price').text();
-                        tel = $('.views-phone em').html();
-                        email = $('.views-link').children().first().attr('href');
-                        type = $('.views-content ul:nth-child(3) span').text();
-                        imgLink = $('.views-cover-img').find('img').attr('src') || '';
+                var name, location, price, tel, email, type, imgLink;
+                console.log('Enter Sublink');
+                let $ = window;
+                $('.views-row-address p').remove();
+                console.log($('.views-cover-img').find('img').attr('src'));
+                name = $('.views-people em').text();
+                location = $('.views-row-address').text();
+                price = $('.views-price').text();
+                tel = $('.views-phone em').html();
+                email = $('.views-link').children().first().attr('href');
+                type = $('.views-content ul:nth-child(3) span').text();
+                imgLink = $('.views-cover-img').find('img').attr('src') || '';
 
-                        info.yorkbbsHouseSelling.push({
-                            name: name,
-                            location: location,
-                            price: price,
-                            tel: tel,
-                            email: email,
-                            type: type,
-                            imgLink: imgLink,
-                        });
-                        resolve();
+                info.yorkbbsHouseSelling.push({
+                    name: name,
+                    location: location,
+                    price: price,
+                    tel: tel,
+                    email: email,
+                    type: type,
+                    imgLink: imgLink,
+                });
+                resolve();
             });
         },
     },
@@ -171,8 +165,8 @@ let processResult = (array) => {
     array.forEach((record) => {
         let link = record['imgLink'] ? record['imgLink'].toString() : '';
         let filename = RESULT_IMAGE + link.substring(link.lastIndexOf('/') + 1);
-        if(link)
-        download(link, filename, () => { });
+        if (link)
+            download(link, filename, () => { });
     });
     fs.open(path, 'a', storeIntoFile(path, array));
 };
@@ -180,14 +174,14 @@ let processResult = (array) => {
 let download = (uri, filename, callback) => {
     let dir = filename.substring(filename.lastIndexOf('\\'), 0);
     fs.mkdir(dir, () => { });
-    request.head(uri, function (err,res,body) {
-        request(uri).pipe(fs.createWriteStream(filename, {falgs:'w'})).on('close',callback);
+    request.head(uri, function (err, res, body) {
+        request(uri).pipe(fs.createWriteStream(filename, { falgs: 'w' })).on('close', callback);
     });
 };
 
 let storeIntoFile = (path, array) => {
     return function () {
-        fs.writeFile(path, JSON.stringify(array), {flag:'a'});
+        fs.writeFile(path, JSON.stringify(array), { flag: 'a' });
     };
 };
 ////////////////
@@ -201,25 +195,11 @@ let run = () => {
     requestUrl(urlList['_51caHouseSelling'])
         .then(getDom, logError)
         .then(getData['_51caHouseSelling'], logError)
-        .then(processResult)
-    ;
+        .then(processResult);
 
     requestUrl(urlList['yorkbbsHouseSelling'])
         .then(getDom, logError)
-        .then(getData.yorkbbsHouseSelling.getAllList, logError)
-        //.then((loop) => {
-        //    Promise.all(loop);
-            
-                //.then(getData.yorkbbsHouseSelling.processSubLink, logError)
-                //.then(processResultt, logError).catch(reason => {
-                //    console.log(reason)
-                //});
-            //return new Promise((resolve, reject) => { resolve(Promise.all(loop)); });
-        //}, logError)
-    
-        
-        //.then(processResultt)
-    ;
+        .then(getData.yorkbbsHouseSelling.getAllList, logError);
 
 };
 
