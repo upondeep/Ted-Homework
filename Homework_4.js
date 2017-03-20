@@ -55,6 +55,7 @@ let getDom = body => {
     return new Promise((resolve, reject) => {
         try {
             let html = iconv.decode(body, 'gb2312');
+            //let html = iconv.decode(body, 'GBK');
             let window = cheerio.load(html, { decodeEntities: false });
             resolve(window);
         } catch (err) {
@@ -135,7 +136,7 @@ let getData = {
                 location = $('.views-row-address').text();
                 price = $('.views-price').text();
                 tel = $('.views-phone em').html();
-                email = $('.views-link').children().first().attr('href');
+                email = handleEmail($('.views-link').children().first().attr('href'));
                 type = $('.views-content ul:nth-child(3) span').text();
                 imgLink = $('.views-cover-img').find('img').attr('src') || '';
 
@@ -189,6 +190,27 @@ let processResultt = (array) => {
 
     console.log('Process Result:.............................................');
     //console.log(array);
+};
+
+let handleEmail = (email) => {
+    let s, j, r, c, id;
+    if (email.includes('email-protection')) {
+        try {
+            let patt = new RegExp('\\w+$');
+            id = patt.exec(email)[0];
+            s = '';
+            r = parseInt(id.substr(0, 2), 16);
+            for (j = 2; id.length - j; j += 2) {
+                c = parseInt(id.substr(j, 2), 16) ^ r;
+                s += String.fromCharCode(c);
+            };
+            return s;
+        } catch (e) {
+
+        };
+    } else {
+        return email.replace(/mailto:/,'');
+    };
 };
 
 let run = () => {
